@@ -1,0 +1,43 @@
+
+
+select * from employees;
+select count(*) from employees;
+select max(salary) from employees;	-- 최대값
+select min(salary) from employees;	-- 최소값
+select sum(salary) from employees;	-- 합계
+select avg(salary) from employees;	-- 평균
+
+select max(salary) as max_salary from employees;	-- 별칭 붙이기
+select min(salary) as min_salary from employees;
+select sum(salary) as sum_salary from employees;
+select avg(salary) as avg_salary from employees;
+
+-- 직업에 따른 평균 급여
+select job_id, avg(salary) as avg_salary from employees
+    group by job_id;
+
+-- 직업에 따른 급여 합계
+select job_id, sum(salary) as sum_salary from employees
+    group by job_id;
+
+-- 직업에 따른 최대 급여
+select job_id, max(salary) as max_salary from employees
+    group by job_id;
+
+-- 최대 급여를 받는 사람의 이름을 조회하려고 했으나, where 절에는 집계 함수를 사용할 수 없음
+/*    
+select first_name, last_name, salary as max_salary from employees
+    where
+        salary = max(salary);
+*/
+
+-- 최대 급여만 조회하는 쿼리문
+select max(salary) from employees;
+
+-- 중첩된 SQL, 서브 쿼리
+-- 이름과 급여를 조회한다 where (급여 = (최대급여 구하는 작은 SQL))
+select first_name, last_name, salary from employees
+    where
+        salary = (select max(salary) from employees);
+
+
