@@ -1,0 +1,124 @@
+2022-12-09
+
+database table constraint
+데이터베이스 테이블 제약조건
+
+- primary key	기본키 (서로 다른 레코드를 구분할 수 있는 대표값)
+	select의 조건으로 기본키를 사용하면, 오로지 한 개의 레코드만 조회할 수 있다
+	public DTO selectOne(int idx) { ... }
+	주로 오라클의 sequence와 연동하여 사용하게 된다
+	unique + not null
+
+- unique	고유키 (다른 레코드의 컬럼값과 중복될 수 없음)
+	중복 불가
+	회원 관리 테이블이 있다면, 회원 번호는 기본키, ID는 고유키
+
+- not null	필수값 (값을 반드시 입력해야함)
+	제약조건이 없으면, 값을 비워둘 수 있지만
+	not null이 있으면 반드시 값을 입력해야 한다. 없으면 추가하거나 수정할 수 없다
+
+- default	기본값 (값을 입력하지 않았을 때 적용되는 값)
+	자동으로 채울 수 있는 값. 데이터 생성 시간이나 시퀀스를 활용한 값을 사용한다.
+
+- check		특정값 (조건에 맞는 값만 입력할 수 있음)
+	최종학력, 혹은 성별 등 정해진 값만 입력받기 위한 장치
+	HTML의 select 혹은 radio와 연동하는 경우가 많다
+	정해진 범위의 숫자값을 입력받을 때도 사용할 수 있다
+
+- foreign key	외래키 (다른 테이블의 특정 값을 참조하는 값)
+	다른 테이블의 데이터를 참조해야만 한다
+	댓글은 게시글 번호를 가지고 있어야 작성할 수 있다
+	이때 댓글에는 게시글 테이블의 글번호 컬럼을 참조해야 한다
+	게시글에 없는 번호는 작성할 수 없다
+
+--------------------------------------------------------------------------------------
+
+create table member2 (
+    idx    	number    	primary key,
+    userid	varchar2(100)	unique not null,
+    userpw	varchar2(255)  	not null,
+    username	varchar2(100)	not null,
+    joinDate	date		default sysdate,
+    gender	varchar2(10)	check(gender in('남성', '여성')),
+    profileImg	varchar2(255)	
+);
+
+-- not null을 포함하지 않으면 필수 입력값이 아니므로 비워둘 수 있다
+
+select * from all_constraints where table_name = 'member2';
+
+--------------------------------------------------------------------------------------
+
+
+select * from recyclebin;
+
+-- 삭제 내역이 많아서, 그중에서 골라서 가져오고 싶을 때
+flashback table "BIN$71yM1eLNCufgVQAAAAAAAQ==$0" to before drop rename to member2;
+
+-- 삭제 내역이 하나만 있다면, 원래 이름을 이용하여 다시 복원
+flashback table member2 to before drop;
+
+-- 휴지통의 삭제내역을 완전히 제거
+purge table member2;
+
+-- drop 하면서 휴지통을 거치지 않고 바로 삭제
+drop table member2 purge;
+
+
+--------------------------------------------------------------------------------------
+
+oracle sequence
+지정된 범위에서 일정한 값을 순서대로 하나씩 뽑아서 사용할 수 있게 하는 데이터베이스 객체
+주로 primary key로 설정된 number 타입의 컬럼의 값을 자동으로 불러오기 위해 사용한다
+
+- 1부터 시작하여 999999999까지 1씩 증가하는 숫자를 자동으로 관리하는 시퀀스
+
+create sequence member2_seq
+    start with 1
+    maxvalue 999999999
+    increment by 1
+    nocache
+    nocycle;
+
+for(int i = 1; i <= 999999999; i++) {
+    ...
+}
+
+--------------------------------------------------------------------------------------
+
+drop sequence member2_seq;
+drop table member2;
+
+create sequence member2_seq
+    start with 1000
+    maxvalue 999999999
+    increment by 1
+    nocache
+    nocycle;
+
+create table member2 (
+    idx    	number    	default member2_seq.nextval primary key,
+    userid	varchar2(100)	unique not null,
+    userpw	varchar2(255)  	not null,
+    username	varchar2(100)	not null,
+    joinDate	date		default sysdate,
+    gender	varchar2(10)	check(gender in('남성', '여성')),
+    profileImg	varchar2(255)	
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
