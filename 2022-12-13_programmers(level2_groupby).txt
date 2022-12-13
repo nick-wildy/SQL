@@ -1,0 +1,74 @@
+--성분으로 구분한 아이스크림 총 주문량
+
+-- 코드를 입력하세요
+--SELECT * from FIRST_HALF;
+--SELECT * from ICECREAM_INFO;
+
+select
+    ingredient_type,
+    sum(total_order) as TOTAL_ORDER
+    
+        from FIRST_HALF F
+        
+    join ICECREAM_INFO I
+        on F.FLAVOR = I.FLAVOR
+        
+    group by ingredient_type
+    order by TOTAL_ORDER
+
+
+
+
+
+
+
+--고양이와 개는 몇 마리 있을까
+-- 코드를 입력하세요
+SELECT
+    animal_type,
+    count(*)
+        from ANIMAL_INS 
+    
+    group by animal_type
+    order by animal_type
+    
+-- animal_type으로 그룹을 분류하여
+-- 각 그룹이 총 몇개의 레코드를 가지는지 출력
+-- 이때, 정렬은 animal_type을 기준으로 오름차순 정렬
+
+
+
+
+
+
+
+
+
+입양 시각 구하기(1)
+-- 코드를 입력하세요
+
+SELECT
+    to_number(to_char(datetime, 'HH24')) as hour,
+    count(*) as count
+        from ANIMAL_OUTS 
+    
+    where
+        to_number(to_char(datetime, 'HH24')) between 9 and 19
+        
+    group by to_number(to_char(datetime, 'HH24'))
+        
+    order by hour
+
+/*
+SELECT
+    --distinct to_number(to_char(datetime, 'HH24')) as hour
+    distinct animal_type
+        from ANIMAL_OUTS 
+*/
+
+/*select * from ANIMAL_OUTS 
+    order by datetime desc
+    
+    offset 6 rows           -- 처음부터 건너뛰는 줄 수 : 0
+    fetch first 3 rows only -- 건너뛴 이후 출력하는 줄 수 : 5
+*/

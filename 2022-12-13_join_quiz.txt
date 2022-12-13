@@ -1,0 +1,22 @@
+
+직원(employees)과 직책(jobs)의 내용을 한번에 불러오기
+단, 
+	직원의 이름(first+lastname), 
+	직원 부서(department_id)
+	직책타이틀(job_title), 
+	최소급여(min_salary), 
+	최대급여(max_salary)를 조회하세요
+
+select 
+    E.first_name || ' ' || E.last_name as 이름 ,
+    E.department_id as 부서코드,
+    J.job_title as 직책,
+    J.min_salary as 최소급여,
+    J.max_salary as 최대급여
+    
+    from employees E
+    join jobs J
+        on 
+            E.job_id = J.job_id 
+            --and E.department_id is not null;
+    where E.department_id is not null;

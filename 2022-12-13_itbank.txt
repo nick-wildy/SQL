@@ -1,0 +1,88 @@
+-- 상품 테이블 (idx가 PK)
+select * from product;
+
+/*
+    상품의 판매내역을 기록하는 sales 테이블을 작성한다
+    매출번호, 구매자, 판매상품, 날짜
+*/
+create table sales (
+    idx         number          primary key,
+    buyer       varchar2(100)   not null,     
+    product_idx number          ,
+    sales_date  date            default sysdate,
+    
+    constraint fk_sales_product       -- 제약조건의 이름
+    foreign key(product_idx)          -- 외래키가 될 컬럼
+    references product(idx)           -- 외래키가 참조하는 테이블(컬럼)
+    on delete cascade                 -- 부모키가 삭제될 경우 처리
+);
+
+insert into sales (idx, buyer, product_idx) values (1, 'test1', 500);
+-- ORA-02291: 무결성 제약조건(C##ITBANK.FK_SALES_PRODUCT)이 위배되었습니다- 부모 키가 없습니다
+
+insert into sales (idx, buyer, product_idx) values (1, 'test1', 1);
+insert into sales (idx, buyer, product_idx) values (2, 'test2', 3);
+insert into sales (idx, buyer, product_idx) values (3, 'admin', 9);
+insert into sales (idx, buyer, product_idx) values (4, 'admin', 10);
+
+select * from sales;
+select * from product;
+
+select * from sales, product;
+
+select 
+    S.*,
+    P.name as 상품이름,
+    P.price as 가격
+        from sales S
+        
+    join product P
+        on S.product_idx = P.idx;
+        
+-------------------------------------------------------------------------------
+
+select sysdate from dual;
+select to_char(sysdate, 'YYYYMMDD') from dual;
+select to_char(sysdate, 'YYYY-MM-DD') from dual;
+select to_char(sysdate, 'YYYY.MM.DD') from dual;
+select to_char(sysdate, 'YYYY') as 연도 from dual;
+select to_char(sysdate, 'MM') as 월 from dual;
+select to_char(sysdate, 'DD') as 일 from dual;
+select to_char(sysdate, 'HH') as 시_12 from dual;
+select to_char(sysdate, 'HH24') as 시_24 from dual;
+select to_char(sysdate, 'MI') as 분 from dual;
+select to_char(sysdate, 'SS') as 초 from dual;
+
+select extract(year from sysdate) as 연도 from dual;
+select extract(month from sysdate) as 월 from dual;
+select extract(day from sysdate) as 일 from dual;
+select extract(hour from systimestamp) + 9 as 시 from dual;
+select extract(minute from systimestamp) as 분 from dual;
+select extract(second from systimestamp) as 초 from dual;
+
+-------------------------------------------------------------------------------
+
+select to_date('20221225', 'YYYYMMDD') from dual;
+select to_date('2022/12/25', 'YYYY/MM/DD') from dual;
+select to_date('20221225132554', 'YYYYMMDDHH24MISS') from dual;
+
+
+-------------------------------------------------------------------------------
+
+select 
+    name,
+    age,
+    age - 1 as 만나이,
+    case 
+        when age >= 40 
+            then '어르신' 
+            
+        when age >= 20 
+            then '성인' 
+            
+        else '미성년자' 
+            end 
+                as 성인
+            
+        from member1;
+
